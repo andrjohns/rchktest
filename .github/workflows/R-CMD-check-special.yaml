@@ -1,0 +1,44 @@
+on:
+  push:
+    branches: [main, master, rchk-test]
+  pull_request:
+    branches: [main, master]
+
+name: R-CMD-check-special
+
+jobs:
+  sanitizers-and-valgrind:
+    runs-on: ubuntu-latest
+    name: ${{ matrix.config.name }}
+    container:
+      image: ${{ matrix.config.container }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { label: "rchk",
+              name: "rchk",
+              container: "ghcr.io/r-hub/containers/rchk:latest"}
+
+    env:
+      MAKEFLAGS: -j4
+    steps:
+      - uses: r-hub/actions/checkout@main
+        with:
+          submodules: true
+      - uses: r-hub/actions/platform-info@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          job-config: ${{ toJson(matrix.config) }}
+      - name: Install awk for gcc15
+        if: matrix.config.label == 'gcc15'
+        run: |
+          dnf update -y && dnf install -y awk
+      - uses: r-hub/actions/setup-deps@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          job-config: ${{ toJson(matrix.config) }}
+      - uses: r-hub/actions/run-check@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          job-config: ${{ toJson(matrix.config) }}
