@@ -1,19 +1,18 @@
-#include <cpp11.hpp>
-#include <cpp11/declarations.hpp>
+#include <Rcpp.h>
 #include <boost/math/quadrature/tanh_sinh.hpp>
 #include <cmath>
 
 extern "C" {
   SEXP tanh_sinh_() {
-    BEGIN_CPP11
-      auto func = [](double x) {
-        return std::log(x)*std::log1p(-x);
-      };
+    BEGIN_RCPP
 
-      boost::math::quadrature::tanh_sinh<double> integrator;
-      double result = integrator.integrate(func, 0, 1);
+    auto func = [](double x) { return std::log(x)*std::log1p(-x); };
 
-      return cpp11::as_sexp(result);
-    END_CPP11
+    boost::math::quadrature::tanh_sinh<double> integrator;
+    double result = integrator.integrate(func, 0, 1);
+
+    return Rcpp::wrap(result);
+
+    END_RCPP
   }
 }
