@@ -14,8 +14,9 @@ extern "C" {
     BEGIN_RCPP
     double result = res();
 
-    return Rcpp::wrap(result);
+    Rcpp::RObject result = Rcpp::wrap(result);
 
+    return result;
     END_RCPP
   }
 }
