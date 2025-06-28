@@ -12,6 +12,8 @@ double res() {
 extern "C" {
   SEXP tanh_sinh_() {
     BEGIN_RCPP
+    double dbl_result = res();
+    UNPROTECT(1);
     Rcpp::RObject result = Rcpp::wrap(res());
     return result;
     END_RCPP
