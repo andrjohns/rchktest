@@ -12,10 +12,7 @@ double res() {
 extern "C" {
   SEXP tanh_sinh_() {
     BEGIN_RCPP
-    double result = res();
-
-    Rcpp::RObject result = Rcpp::wrap(result);
-
+    Rcpp::RObject result = Rcpp::wrap(res());
     return result;
     END_RCPP
   }
